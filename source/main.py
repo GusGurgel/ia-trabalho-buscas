@@ -1,6 +1,7 @@
-from math import sqrt
+from math import sqrt, inf
 from result import Result
 from node import Node
+from queue import PriorityQueue
 
 # [ Constants ]
 MAP_SIZE = (30, 30) # cols x rows
@@ -54,10 +55,12 @@ def H2(pos1, pos2):
 def is_valid_pos(pos):
     return pos[0] >= 0 and pos[1] >= 0 and pos[0] <= MAP_SIZE[0] and pos[1] <= MAP_SIZE[1]
 
+# Get all neighbors of a node
 def get_neighbors(node, cost_function):
     neighbors = []
-    for f in ACTIONS_KEYS:
-        neighbor = ACTIONS[cost_function][f](node)
+    for action in ACTIONS_KEYS:
+        neighbor = ACTIONS[cost_function][action](node)
+        # test if node pos is valid
         if is_valid_pos(neighbor.pos):
             neighbors.append(neighbor)
     return neighbors
@@ -81,6 +84,7 @@ def get_path_and_cost_to_node(node : Node):
     current = node
     path = []
     cost = 0
+    # Sum all cost and append all prev nodes
     while current != None:
         path.append(current.pos)
         cost += current.cost
@@ -88,32 +92,107 @@ def get_path_and_cost_to_node(node : Node):
     path.reverse()
     return(path, cost)
 
-def DFS(inital_pos, objective_pos, cost_function) -> Result:
+def DFS(inital_pos, objective_pos, cost_function, verbose=False) -> Result:
     search_function_prelude(inital_pos, objective_pos, cost_function)
 
     stack = [Node(inital_pos, 0, 0)] 
-    visited = {}
+    visited = []
     gen_node_count = 0
     visited_node_count = 0
     res_node = None
 
     while len(stack) > 0:
         current = stack.pop()
-        visited[current.pos] = True
-        visited_node_count += 1
+        if current.pos in visited:
+            continue
 
         if current.pos == objective_pos:
             res_node = current
             break
 
         for neighbor in get_neighbors(current, cost_function):
-            if not neighbor.pos in visited.keys():
+            if not neighbor.pos in visited:
                 gen_node_count += 1
                 stack.append(neighbor)
+        
+        visited.append(current.pos)
+        visited_node_count += 1
     
     path, cost = get_path_and_cost_to_node(res_node)
     if path == []:
         path = "Error"
         cost = None
     return Result(inital_pos, objective_pos, path, cost, gen_node_count, 
-                  visited_node_count)
+                  visited_node_count, "DFS", cost_function, None, verbose)
+
+def BFS(inital_pos, objective_pos, cost_function, verbose=False) -> Result:
+    search_function_prelude(inital_pos, objective_pos, cost_function)
+
+    queue = [Node(inital_pos, 0, 0)] 
+    visited = []
+    gen_node_count = 0
+    visited_node_count = 0
+    res_node = None
+
+    while len(queue) > 0:
+        current = queue.pop(0)
+        if current.pos in visited:
+            continue
+
+        if current.pos == objective_pos:
+            res_node = current
+            break
+
+        for neighbor in get_neighbors(current, cost_function):
+            if not neighbor.pos in visited:
+                gen_node_count += 1
+                queue.append(neighbor)
+
+        visited.append(current.pos)
+        visited_node_count += 1
+    
+    path, cost = get_path_and_cost_to_node(res_node)
+    if path == []:
+        path = "Error"
+        cost = None
+    return Result(inital_pos, objective_pos, path, cost, gen_node_count, 
+                  visited_node_count, "BFS", cost_function, None, verbose)
+
+def UCS(inital_pos, objective_pos, cost_function, verbose=False) -> Result:
+    search_function_prelude(inital_pos, objective_pos, cost_function)
+
+    queue = PriorityQueue() 
+    queue.put((0, Node(inital_pos, 0, 0)))
+    
+    visited = []
+    min_cost = inf # Inital minimum cust equals +infinity
+    gen_node_count = 0
+    visited_node_count = 0
+    res_node = None
+
+    while not queue.empty():
+        priority, current = queue.get()
+        if current.pos in visited:
+            continue
+        print(priority, current)
+
+        if current.pos == objective_pos and priority < min_cost:
+            res_node = current
+            min_cost = priority
+            break
+
+        for neighbor in get_neighbors(current, cost_function):
+            if not neighbor.pos in visited:
+                gen_node_count += 1
+                # Accumulate cost = current.cost + neighbor.cost
+                queue.put((neighbor.cost + current.cost, neighbor))
+        
+        visited.append(current.pos)
+        visited_node_count += 1
+    
+    path, cost = get_path_and_cost_to_node(res_node)
+    if path == []:
+        path = "Error"
+        cost = None
+    return Result(inital_pos, objective_pos, path, cost, gen_node_count, 
+                  visited_node_count, "UCS", cost_function, None, verbose)
