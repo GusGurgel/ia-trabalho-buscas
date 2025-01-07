@@ -1,0 +1,9 @@
+Inital State: (0, 0)
+Search Objective: (1, 1)
+Path: [(0, 0), (1, 0), (1, 1)]
+Path Cost: 20
+Count Nodes Genereted: 8
+Count Nodes Visited: 4
+Algorithm: BFS
+Cost Function: c1
+Heuristic: None

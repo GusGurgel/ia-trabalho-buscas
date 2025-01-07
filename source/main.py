@@ -19,28 +19,28 @@ COST_KEYS = ["c1", "c2", "c3", "c4"]
 # All agent actions based on cost function
 ACTIONS = {
     "c1": {
-        "f1": lambda node : Node(F1(node.pos), node.t+1, 10,  node),
-        "f2": lambda node : Node(F2(node.pos), node.t+1, 10,  node),
-        "f3": lambda node : Node(F3(node.pos), node.t+1, 10,  node),
-        "f4": lambda node : Node(F4(node.pos), node.t+1, 10,  node),
+        "f1": lambda node : Node(F1(node.pos), 10, node),
+        "f2": lambda node : Node(F2(node.pos), 10, node),
+        "f3": lambda node : Node(F3(node.pos), 10, node),
+        "f4": lambda node : Node(F4(node.pos), 10, node),
     },
     "c2": {
-        "f1": lambda node : Node(F1(node.pos), node.t+1, 15, node),
-        "f2": lambda node : Node(F2(node.pos), node.t+1, 15, node),
-        "f3": lambda node : Node(F3(node.pos), node.t+1, 10, node),
-        "f4": lambda node : Node(F4(node.pos), node.t+1, 10, node),
+        "f1": lambda node : Node(F1(node.pos), 15, node),
+        "f2": lambda node : Node(F2(node.pos), 15, node),
+        "f3": lambda node : Node(F3(node.pos), 10, node),
+        "f4": lambda node : Node(F4(node.pos), 10, node),
     },
     "c3": {
-        "f1": lambda node : Node(F1(node.pos), node.t+1, 10 + (abs(5-node.t+1)%6), node),
-        "f2": lambda node : Node(F2(node.pos), node.t+1, 10 + (abs(5-node.t+1)%6), node),
-        "f3": lambda node : Node(F3(node.pos), node.t+1, 10, node),
-        "f4": lambda node : Node(F4(node.pos), node.t+1, 10, node),
+        "f1": lambda node : Node(F1(node.pos), 10 + (abs(5-node.t+1)%6), node),
+        "f2": lambda node : Node(F2(node.pos), 10 + (abs(5-node.t+1)%6), node),
+        "f3": lambda node : Node(F3(node.pos), 10, node),
+        "f4": lambda node : Node(F4(node.pos), 10, node),
     },
     "c4": {
-        "f1": lambda node : Node(F1(node.pos), node.t+1, 5 + (abs(10-node.t+1)%11), node),
-        "f2": lambda node : Node(F2(node.pos), node.t+1, 5 + (abs(10-node.t+1)%11), node),
-        "f3": lambda node : Node(F3(node.pos), node.t+1, 10, node),
-        "f4": lambda node : Node(F4(node.pos), node.t+1, 10, node),
+        "f1": lambda node : Node(F1(node.pos), 5 + (abs(10-node.t+1)%11), node),
+        "f2": lambda node : Node(F2(node.pos), 5 + (abs(10-node.t+1)%11), node),
+        "f3": lambda node : Node(F3(node.pos), 10, node),
+        "f4": lambda node : Node(F4(node.pos), 10, node),
     }
 }
 
@@ -84,18 +84,18 @@ def get_path_and_cost_to_node(node : Node):
     current = node
     path = []
     cost = 0
-    # Sum all cost and append all prev nodes
+    # Sum all cost and append path
     while current != None:
         path.append(current.pos)
         cost += current.cost
-        current = current.prev
+        current = current.parrent
     path.reverse()
     return(path, cost)
 
 def DFS(inital_pos, objective_pos, cost_function, verbose=False) -> Result:
     search_function_prelude(inital_pos, objective_pos, cost_function)
 
-    stack = [Node(inital_pos, 0, 0)] 
+    stack = [Node(inital_pos)] 
     visited = []
     gen_node_count = 0
     visited_node_count = 0
@@ -128,7 +128,7 @@ def DFS(inital_pos, objective_pos, cost_function, verbose=False) -> Result:
 def BFS(inital_pos, objective_pos, cost_function, verbose=False) -> Result:
     search_function_prelude(inital_pos, objective_pos, cost_function)
 
-    queue = [Node(inital_pos, 0, 0)] 
+    queue = [Node(inital_pos)] 
     visited = []
     gen_node_count = 0
     visited_node_count = 0
@@ -162,30 +162,28 @@ def UCS(inital_pos, objective_pos, cost_function, verbose=False) -> Result:
     search_function_prelude(inital_pos, objective_pos, cost_function)
 
     queue = PriorityQueue() 
-    queue.put((0, Node(inital_pos, 0, 0)))
+    queue.put(Node(inital_pos))
     
     visited = []
-    min_cost = inf # Inital minimum cust equals +infinity
     gen_node_count = 0
     visited_node_count = 0
     res_node = None
 
     while not queue.empty():
-        priority, current = queue.get()
+        current = queue.get()
+        print(current.accumulate_cost)
+
         if current.pos in visited:
             continue
-        print(priority, current)
 
-        if current.pos == objective_pos and priority < min_cost:
+        if current.pos == objective_pos:
             res_node = current
-            min_cost = priority
             break
 
         for neighbor in get_neighbors(current, cost_function):
             if not neighbor.pos in visited:
                 gen_node_count += 1
-                # Accumulate cost = current.cost + neighbor.cost
-                queue.put((neighbor.cost + current.cost, neighbor))
+                queue.put(neighbor)
         
         visited.append(current.pos)
         visited_node_count += 1
@@ -196,3 +194,6 @@ def UCS(inital_pos, objective_pos, cost_function, verbose=False) -> Result:
         cost = None
     return Result(inital_pos, objective_pos, path, cost, gen_node_count, 
                   visited_node_count, "UCS", cost_function, None, verbose)
+
+print(UCS((0, 0), (2, 1), "c3", True))
+print(BFS((0, 0), (2, 1), "c3", True))
