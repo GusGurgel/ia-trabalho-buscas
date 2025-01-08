@@ -1,8 +1,9 @@
+from node import *
+
 # Represent a search result
 class Result:
     def __init__(self, initial_state, search_objective, path, cost, gen_nodes, 
-                 visit_nodes, algorithm=None, cost_function=None, 
-                 heuristic=None, verbose = False):
+                 visit_nodes, algorithm=None, verbose = False):
         self.initial_state = initial_state
         self.search_objective = search_objective
         self.path = path
@@ -10,8 +11,8 @@ class Result:
         self.gen_nodes = gen_nodes
         self.visit_nodes = visit_nodes
         self.algorithm = algorithm
-        self.cost_function = cost_function
-        self.heuristic = heuristic
+        self.cost_function = Node.cost_function
+        self.heuristic = Node.heuristic_function
         self.verbose = verbose
     
     def __str__(self):
