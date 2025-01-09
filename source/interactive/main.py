@@ -1,5 +1,5 @@
 from settings import *
-
+from sprites import *
 
 class App:
     def __init__(self):
@@ -21,6 +21,9 @@ class App:
         # Proprieties
         self.running = True
         self.clock = pygame.Clock()
+        self.all_sprites = pygame.sprite.Group()
+
+        self.gride = Grid(self.all_sprites)
 
         # Setting up ui
         self.ui_manager = pygame_gui.UIManager(
@@ -38,8 +41,10 @@ class App:
                     self.running = False
 
             self.ui_manager.update(dt)
+            self.all_sprites.update(dt)
 
-            self.display_surface.fill("skyblue")
+            self.display_surface.fill(COLORS["bg"])
+            self.all_sprites.draw(self.display_surface)
 
             self.ui_manager.draw_ui(self.display_surface)
 
@@ -48,7 +53,6 @@ class App:
 
         # Quit services
         pygame.quit()
-
 
 if __name__ == "__main__":
     app = App()
