@@ -19,7 +19,7 @@ def DFS(inital_pos, objective_pos, verbose=False) -> Result:
 
     stack = [Node(inital_pos)]
     visited = []
-    generate_node_count = 0
+    generate_node_count = 1
     visited_node_count = 0
     result_node = None
 
@@ -29,12 +29,13 @@ def DFS(inital_pos, objective_pos, verbose=False) -> Result:
             continue
 
         if current_node.pos == objective_pos:
+            visited_node_count += 1
             result_node = current_node
             break
 
         for neighbor in current_node.get_neighbors():
+            generate_node_count += 1
             if not neighbor.pos in visited:
-                generate_node_count += 1
                 stack.append(neighbor)
 
         visited.append(current_node.pos)
@@ -57,7 +58,7 @@ def BFS(inital_pos, objective_pos, verbose=False) -> Result:
 
     queue = [Node(inital_pos)]
     visited = []
-    generate_node_count = 0
+    generate_node_count = 1
     visited_node_count = 0
     result_node = None
 
@@ -67,12 +68,14 @@ def BFS(inital_pos, objective_pos, verbose=False) -> Result:
             continue
 
         if current_node.pos == objective_pos:
+            visited_node_count += 1
             result_node = current_node
             break
 
         for neighbor in current_node.get_neighbors():
+            print(neighbor.pos)
+            generate_node_count += 1
             if not neighbor.pos in visited:
-                generate_node_count += 1
                 queue.append(neighbor)
 
         visited.append(current_node.pos)
@@ -96,7 +99,7 @@ def UCS(inital_pos, objective_pos, verbose=False) -> Result:
     queue.put(Node(inital_pos))
 
     visited = []
-    generate_node_count = 0
+    generate_node_count = 1
     visited_node_count = 0
     result_node = None
 
@@ -111,8 +114,8 @@ def UCS(inital_pos, objective_pos, verbose=False) -> Result:
             break
 
         for neighbor in current_node.get_neighbors():
+            generate_node_count += 1
             if not neighbor.pos in visited:
-                generate_node_count += 1
                 queue.put(neighbor)
 
         visited.append(current_node.pos)
@@ -133,16 +136,15 @@ def Greedy(inital_pos, objective_pos, verbose=False) -> Result:
     search_function_prelude(inital_pos, objective_pos)
 
     visited = []
-    generate_node_count = 0
+    generate_node_count = 1
     visited_node_count = 0
     result_node = None
 
     current = Node(inital_pos)
     while True:
-        visited_node_count += 1
-        
         # Find path case
         if current.pos == objective_pos:
+            visited_node_count += 1
             result_node = current
             current = None
             break
@@ -162,6 +164,7 @@ def Greedy(inital_pos, objective_pos, verbose=False) -> Result:
             break
 
         # Set old node as visited
+        visited_node_count += 1
         visited.append(current.pos)
 
         # Get the node with lower heuristic function cost
@@ -188,7 +191,7 @@ def A_Star(inital_pos, objective_pos, verbose=False) -> Result:
     queue.put(Node(inital_pos))
 
     visited = []
-    generate_node_count = 0
+    generate_node_count = 1
     visited_node_count = 0
     result_node = None
 
@@ -199,12 +202,14 @@ def A_Star(inital_pos, objective_pos, verbose=False) -> Result:
             continue
 
         if current_node.pos == objective_pos:
+            visited_node_count += 1
             result_node = current_node
             break
 
         for neighbor in current_node.get_neighbors():
+            generate_node_count += 1
             if not neighbor.pos in visited:
-                generate_node_count += 1
+                print(neighbor.pos)
                 queue.put(neighbor)
 
         visited.append(current_node.pos)
@@ -224,7 +229,7 @@ def A_Star(inital_pos, objective_pos, verbose=False) -> Result:
         verbose
     )
 
-# print(A_Star((0, 0), (0, 2), True))
-Node.cost_function = "c1"
-Node.heuristic_function = "h1"
-print(Greedy((0, 0), (1, 1), True))
+if __name__ == "__main__":
+    Node.cost_function = "c1"
+    Node.heuristic_function = "h2"
+    print(DFS((0, 0), (0,  1), True))
