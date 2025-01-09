@@ -6,6 +6,10 @@ class Node:
     cost_function = "c1"
     heuristic_function = "h1"
 
+    # Variable for A* search
+    use_a_star_compration = False
+    a_start_objective_node = None
+
     def __init__(self, pos, cost=0, parrent=None):
         self.pos = pos  # node position
         self.cost = cost  # cost to node
@@ -81,10 +85,20 @@ class Node:
         return True
 
     def __gt__(self, other):
-        return self.accumulate_cost > other.accumulate_cost
+        if Node.use_a_star_compration and Node.a_start_objective_node != None:
+            self_cost = self.accumulate_cost + self.get_heuristic_value(Node.a_start_objective_node)
+            other_cost = other.accumulate_cost + other.get_heuristic_value(Node.a_start_objective_node)
+            return self_cost > other_cost
+        else:
+            return self.accumulate_cost > other.accumulate_cost
 
     def __lt__(self, other):
-        return self.accumulate_cost < other.accumulate_cost
+        if Node.use_a_star_compration and Node.a_start_objective_node != None:
+            self_cost = self.accumulate_cost + self.get_heuristic_value(Node.a_start_objective_node)
+            other_cost = other.accumulate_cost + other.get_heuristic_value(Node.a_start_objective_node)
+            return self_cost < other_cost
+        else:
+            return self.accumulate_cost < other.accumulate_cost
 
     def __str__(self):
         return f"pos: {self.pos}, depth: {self.depth}, cost: {self.cost}, "
