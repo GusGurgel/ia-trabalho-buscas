@@ -19,8 +19,7 @@ def DFS(inital_pos, objective_pos, verbose=False) -> Result:
 
     stack = [Node(inital_pos)]
     visited = []
-    generate_node_count = 1
-    visited_node_count = 0
+    generate_node_count = 1 # Considering inital_pos
     result_node = None
 
     while len(stack) > 0:
@@ -29,17 +28,16 @@ def DFS(inital_pos, objective_pos, verbose=False) -> Result:
             continue
 
         if current_node.pos == objective_pos:
-            visited_node_count += 1
+            visited.append(current_node)
             result_node = current_node
             break
 
         for neighbor in current_node.get_neighbors():
-            generate_node_count += 1
             if not neighbor.pos in visited:
+                generate_node_count += 1
                 stack.append(neighbor)
 
         visited.append(current_node.pos)
-        visited_node_count += 1
 
     return Result(
         inital_pos,
@@ -47,7 +45,7 @@ def DFS(inital_pos, objective_pos, verbose=False) -> Result:
         "Error" if result_node == None else result_node.path,
         "+Infinity" if result_node == None else result_node.accumulate_cost,
         generate_node_count,
-        visited_node_count,
+        len(visited),
         "DFS",
         verbose
     )
@@ -59,7 +57,6 @@ def BFS(inital_pos, objective_pos, verbose=False) -> Result:
     queue = [Node(inital_pos)]
     visited = []
     generate_node_count = 1
-    visited_node_count = 0
     result_node = None
 
     while len(queue) > 0:
@@ -68,18 +65,16 @@ def BFS(inital_pos, objective_pos, verbose=False) -> Result:
             continue
 
         if current_node.pos == objective_pos:
-            visited_node_count += 1
+            visited.append(current_node)
             result_node = current_node
             break
 
         for neighbor in current_node.get_neighbors():
-            print(neighbor.pos)
-            generate_node_count += 1
             if not neighbor.pos in visited:
+                generate_node_count += 1
                 queue.append(neighbor)
 
         visited.append(current_node.pos)
-        visited_node_count += 1
 
     return Result(
         inital_pos,
@@ -87,7 +82,7 @@ def BFS(inital_pos, objective_pos, verbose=False) -> Result:
         "Error" if result_node == None else result_node.path,
         "+Infinity" if result_node == None else result_node.accumulate_cost,
         generate_node_count,
-        visited_node_count,
+        len(visited),
         "BFS",
         verbose
     )
@@ -100,7 +95,6 @@ def UCS(inital_pos, objective_pos, verbose=False) -> Result:
 
     visited = []
     generate_node_count = 1
-    visited_node_count = 0
     result_node = None
 
     while not queue.empty():
@@ -110,16 +104,16 @@ def UCS(inital_pos, objective_pos, verbose=False) -> Result:
             continue
 
         if current_node.pos == objective_pos:
+            visited.append(current_node)
             result_node = current_node
             break
 
         for neighbor in current_node.get_neighbors():
-            generate_node_count += 1
             if not neighbor.pos in visited:
+                generate_node_count += 1
                 queue.put(neighbor)
 
         visited.append(current_node.pos)
-        visited_node_count += 1
 
     return Result(
         inital_pos,
@@ -127,7 +121,7 @@ def UCS(inital_pos, objective_pos, verbose=False) -> Result:
         "Error" if result_node == None else result_node.path,
         "+Infinity" if result_node == None else result_node.accumulate_cost,
         generate_node_count,
-        visited_node_count,
+        len(visited),
         "UCS",
         verbose
     )
@@ -137,14 +131,13 @@ def Greedy(inital_pos, objective_pos, verbose=False) -> Result:
 
     visited = []
     generate_node_count = 1
-    visited_node_count = 0
     result_node = None
 
     current = Node(inital_pos)
     while True:
         # Find path case
         if current.pos == objective_pos:
-            visited_node_count += 1
+            visited.append(current)
             result_node = current
             current = None
             break
@@ -156,7 +149,6 @@ def Greedy(inital_pos, objective_pos, verbose=False) -> Result:
         # Filter by visited
         neighbors = list(filter(lambda x: x.pos not in visited, neighbors))
 
-        # print(list(map(lambda x: f"{x.pos}, {x.get_heuristic_value(Node(objective_pos))}", neighbors)))
 
         # No path find case
         if len(neighbors) == 0:
@@ -164,7 +156,6 @@ def Greedy(inital_pos, objective_pos, verbose=False) -> Result:
             break
 
         # Set old node as visited
-        visited_node_count += 1
         visited.append(current.pos)
 
         # Get the node with lower heuristic function cost
@@ -177,7 +168,7 @@ def Greedy(inital_pos, objective_pos, verbose=False) -> Result:
         "Error" if result_node == None else result_node.path,
         "+Infinity" if result_node == None else result_node.accumulate_cost,
         generate_node_count,
-        visited_node_count,
+        len(visited),
         "Greedy",
         verbose
     )
@@ -192,7 +183,6 @@ def A_Star(inital_pos, objective_pos, verbose=False) -> Result:
 
     visited = []
     generate_node_count = 1
-    visited_node_count = 0
     result_node = None
 
     while not queue.empty():
@@ -202,18 +192,16 @@ def A_Star(inital_pos, objective_pos, verbose=False) -> Result:
             continue
 
         if current_node.pos == objective_pos:
-            visited_node_count += 1
+            visited.append(current_node)
             result_node = current_node
             break
 
         for neighbor in current_node.get_neighbors():
             generate_node_count += 1
             if not neighbor.pos in visited:
-                print(neighbor.pos)
                 queue.put(neighbor)
 
         visited.append(current_node.pos)
-        visited_node_count += 1
 
     Node.use_a_star_compration = False
     Node.a_start_objective_node = None
@@ -224,7 +212,7 @@ def A_Star(inital_pos, objective_pos, verbose=False) -> Result:
         "Error" if result_node == None else result_node.path,
         "+Infinity" if result_node == None else result_node.accumulate_cost,
         generate_node_count,
-        visited_node_count,
+        len(visited),
         "A_Star",
         verbose
     )
@@ -232,4 +220,5 @@ def A_Star(inital_pos, objective_pos, verbose=False) -> Result:
 if __name__ == "__main__":
     Node.cost_function = "c1"
     Node.heuristic_function = "h2"
-    print(DFS((0, 0), (0,  1), True))
+    print(Greedy((0, 0), (10,  10), True))
+    print(A_Star((0, 0), (10,  10), True))
