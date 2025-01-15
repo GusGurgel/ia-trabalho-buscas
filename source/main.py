@@ -219,6 +219,9 @@ def A_Star(inital_pos, objective_pos, verbose=False) -> Result:
 
 if __name__ == "__main__":
     Node.cost_function = "c1"
-    Node.heuristic_function = "h2"
-    print(Greedy((0, 0), (10,  10), True))
-    print(A_Star((0, 0), (10,  10), True))
+    Node.heuristic_function = "h1"
+    r1 = BFS((0, 0), (2,  2), True)
+    r2 = DFS((0, 0), (2,  2), True)
+
+    Result.saveResultsAsCSV([r1, r2])
+    # print(A_Star((0, 0), (8,  7), True))

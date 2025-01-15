@@ -1,7 +1,29 @@
 from node import *
+import csv
+
+RESULT_CSV_FIELDS = [[
+    "Inital State",
+    "Search Objective",
+    "Path",
+    "Cost",
+    "Generated Nodes",
+    "Visited Nodes",
+    "Algorithm",
+    "Cost Function",
+    "Heuristic"
+]]
 
 # Represent a search result
 class Result:
+    def saveResultsAsCSV(arr, path="result.csv"):
+        with open(path, 'w', newline='') as file:
+            arr = map(lambda x : x.as_array(), arr)
+            writer = csv.writer(file)
+            # Write header
+            writer.writerows(RESULT_CSV_FIELDS)
+            # Write rows
+            writer.writerows(arr)
+
     def __init__(self, initial_state, search_objective, path, cost, gen_nodes, 
                  visit_nodes, algorithm=None, verbose = False):
         self.initial_state = initial_state
@@ -14,6 +36,20 @@ class Result:
         self.cost_function = Node.cost_function
         self.heuristic = Node.heuristic_function
         self.verbose = verbose
+
+    def as_array(self):
+        return [
+            self.initial_state,
+            self.search_objective,
+            self.path,
+            self.cost,
+            self.gen_nodes,
+            self.visit_nodes,
+            self.algorithm,
+            self.cost_function,
+            self.heuristic
+        ]
+        
     
     def __str__(self):
         res = f"""Inital State: {self.initial_state}
