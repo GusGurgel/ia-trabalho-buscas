@@ -1,6 +1,7 @@
 from result import Result
 from node import Node
 from queue import PriorityQueue
+import random
 
 # [ Variables ]
 interest_points = {}
@@ -217,11 +218,84 @@ def A_Star(inital_pos, objective_pos, verbose=False) -> Result:
         verbose
     )
 
-if __name__ == "__main__":
-    Node.cost_function = "c1"
-    Node.heuristic_function = "h1"
-    r1 = BFS((0, 0), (2,  2), True)
-    r2 = DFS((0, 0), (2,  2), True)
+def verify_tuple_is_in_array(array, tuple):
+    for i in array:
+        if i[0] == tuple[0] and i[1] == tuple[1]:
+            return True
+    return False
 
-    Result.saveResultsAsCSV([r1, r2])
+if __name__ == "__main__":
+    starting_points = []
+    destinations = []
+    resultsBFS = []
+    resultsDFS = []
+    resultsUCS = []
+
+    while len(starting_points) < 50:
+        starting = (random.randint(0, 29), random.randint(0, 29))
+        destination = (random.randint(0, 29), random.randint(0, 29))
+        if not verify_tuple_is_in_array(starting_points, starting) and not verify_tuple_is_in_array(destinations, destination):
+            starting_points.append(starting)
+            destinations.append(destination)
+            
+   
+    Node.heuristic_function = "h1"
+
+    print('BFS')
+    for starting in starting_points:
+        Node.cost_function = "c1"
+        r1 = BFS(starting, destinations[starting_points.index(starting)], False)
+        resultsBFS.append(r1)
+        Node.cost_function = "c2"
+        r2 = BFS(starting, destinations[starting_points.index(starting)], False)
+        resultsBFS.append(r2)
+        Node.cost_function = "c3"
+        r3 = BFS(starting, destinations[starting_points.index(starting)], False)
+        resultsBFS.append(r3)
+        Node.cost_function = "c4"
+        r4 = BFS(starting, destinations[starting_points.index(starting)], False)
+        resultsBFS.append(r4)
+
+    print('DFS')
+    for starting in starting_points:
+        Node.cost_function = "c1"
+        r1 = DFS(starting, destinations[starting_points.index(starting)], False)
+        resultsDFS.append(r1)
+        Node.cost_function = "c2"
+        r2 = DFS(starting, destinations[starting_points.index(starting)], False)
+        resultsDFS.append(r2)
+        Node.cost_function = "c3"
+        r3 = DFS(starting, destinations[starting_points.index(starting)], False)
+        resultsDFS.append(r3)
+        Node.cost_function = "c4"
+        r4 = DFS(starting, destinations[starting_points.index(starting)], False)
+        resultsDFS.append(r4)
+
+    print('UCS')
+    for starting in starting_points:
+        Node.cost_function = "c1"
+        r1 = UCS(starting, destinations[starting_points.index(starting)], False)
+        resultsUCS.append(r1)
+        Node.cost_function = "c2"
+        r2 = UCS(starting, destinations[starting_points.index(starting)], False)
+        resultsUCS.append(r2)
+        Node.cost_function = "c3"
+        r3 = UCS(starting, destinations[starting_points.index(starting)], False)
+        resultsUCS.append(r3)
+        Node.cost_function = "c4"
+        r4 = UCS(starting, destinations[starting_points.index(starting)], False)
+        resultsUCS.append(r4)
+    
+    print('Saving resultBFS')
+    Result.saveResultsAsCSV(resultsBFS, "resultBFS.csv")
+    print('Saving resultDFS')
+    Result.saveResultsAsCSV(resultsDFS, "resultDFS.csv" )
+    print('Saving resultUCS')
+    Result.saveResultsAsCSV(resultsUCS, "resultUCS.csv")
+
+    # Node.cost_function = "c1"
+    # r1 = BFS((0, 0), (2,  2), True)
+    # r2 = DFS((0, 0), (2,  2), True)
+
+    # Result.saveResultsAsCSV([r1, r2])
     # print(A_Star((0, 0), (8,  7), True))
