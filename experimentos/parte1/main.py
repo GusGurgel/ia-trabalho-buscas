@@ -4,12 +4,6 @@ from node import Node
 from result import Result
 from searches import BFS, DFS, UCS
 
-def verify_tuple_is_in_array(array, tuple):
-    for i in array:
-        if i[0] == tuple[0] and i[1] == tuple[1]:
-            return True
-    return False
-
 if __name__ == "__main__":
     search_objectives = []
 
@@ -23,10 +17,10 @@ if __name__ == "__main__":
         
     COST_FUNCTIONS = ["c1", "c2", "c3", "c4"]
     SEARCHES = [("BFS",BFS), ("DFS",DFS), ("UCS",UCS)]
-    SAVE_PATH = dirname(join(realpath(__file__), "resultado"))
+    SAVE_PATH = join(dirname(realpath(__file__)), "resultado")
 
-    for serach_name, search_function in SEARCHES:
-        print(f"running {serach_name}...")
+    for search_name, search_function in SEARCHES:
+        print(f"running {search_name}...")
         results = []
         for search_objective in search_objectives:
             for cost_function in COST_FUNCTIONS:
@@ -35,5 +29,5 @@ if __name__ == "__main__":
                     search_objective[0],
                     search_objective[1]
                 ))
-        print(f"Saving result{serach_name}.csv")
-        Result.saveResultsAsCSV(results, join(SAVE_PATH,f"result{serach_name}.csv"))
+        print(f"Saving result{search_name}.csv")
+        Result.saveResultsAsCSV(results, join(SAVE_PATH, f"resultado{search_name}.csv"))
