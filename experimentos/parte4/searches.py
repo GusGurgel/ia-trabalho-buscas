@@ -1,6 +1,7 @@
 from result import Result
 from node import Node
 from queue import PriorityQueue
+from random import shuffle
 import random
 
 # [ Variables ]
@@ -33,7 +34,9 @@ def DFS(inital_pos, objective_pos, verbose=False) -> Result:
             result_node = current_node
             break
 
-        for neighbor in current_node.get_neighbors():
+        neighbors = current_node.get_neighbors()
+        shuffle(neighbors) # randomizar a vizinhança
+        for neighbor in  neighbors:
             if not neighbor.pos in visited:
                 generate_node_count += 1
                 stack.append(neighbor)
@@ -69,7 +72,9 @@ def BFS(inital_pos, objective_pos, verbose=False) -> Result:
             result_node = current_node
             break
 
-        for neighbor in current_node.get_neighbors():
+        neighbors = current_node.get_neighbors()
+        shuffle(neighbors) # randomizar a vizinhança
+        for neighbor in neighbors:
             if not neighbor.pos in visited:
                 generate_node_count += 1
                 queue.append(neighbor)

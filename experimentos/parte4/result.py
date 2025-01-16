@@ -11,6 +11,7 @@ RESULT_CSV_FIELDS = [[
     "Algorithm",
     "Cost Function",
     "Heuristic"
+    "Execution Number"
 ]]
 
 # Represent a search result
@@ -25,7 +26,7 @@ class Result:
             writer.writerows(arr)
 
     def __init__(self, initial_state, search_objective, path, cost, gen_nodes, 
-                 visit_nodes, algorithm=None, verbose = False):
+                 visit_nodes, algorithm=None, verbose=False):
         self.initial_state = initial_state
         self.search_objective = search_objective
         self.path = path
@@ -36,6 +37,7 @@ class Result:
         self.cost_function = Node.cost_function
         self.heuristic = Node.heuristic_function
         self.verbose = verbose
+        self.execution_number = None
 
     def as_array(self):
         return [
@@ -47,7 +49,8 @@ class Result:
             self.visit_nodes,
             self.algorithm,
             self.cost_function,
-            self.heuristic
+            self.heuristic,
+            self.execution_number
         ]
         
     
