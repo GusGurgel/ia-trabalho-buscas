@@ -25,7 +25,6 @@ if __name__ == "__main__":
         results = []
         for search_objective in search_objectives:
             for cost_function in COST_FUNCTIONS:
-                if search_name == "A_Star":
                     for heuristic_function in HEURISTIC_FUNCTIONS:
                         Node.heuristic_function = heuristic_function
                         Node.cost_function = cost_function
@@ -33,11 +32,6 @@ if __name__ == "__main__":
                             search_objective[0],
                             search_objective[1]
                         ))
-                else: 
-                    Node.cost_function = cost_function
-                    results.append(search_function(
-                        search_objective[0],
-                        search_objective[1]
-                    ))
+
         print(f"Saving result{search_name}.csv")
         Result.saveResultsAsCSV(results, join(SAVE_PATH, f"resultado{search_name}.csv"))
