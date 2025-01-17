@@ -9,51 +9,18 @@ class Node:
     # Variable for A* search
     use_a_star_compration = False
     a_start_objective_node = None
+    pharmacy_positions = [(1, 2), (3, 4)]
 
-    @staticmethod
-    def get_function_to_move(node1, node2):
-        dx = node2.pos[0] - node1.pos[0]
-        dy = node2.pos[1] - node1.pos[1]
-
-        vx = (dx, dy)
-
-        if vx == (-1, 0):
-            return (0, F1)
-        elif vx == (1, 0):
-            return (1, F2)
-        elif vx == (0, -1):
-            return (2, F3)
-        elif vx == (0, 1):
-            return (3, F4)
-        else:
-            raise Exception(f"Not neighbors nodes\nnode1.pos:{node1.pos}\nnode2.pos:{node2.pos})")
-
-    def get_cost_with_cost_function(self, cost_function):
-        old_cost = Node.cost_function
-        Node.cost_function = cost_function
-
-        cost = 0
-        current = self
-
-        while current.parrent != None:
-            costs = current.parrent.get_costs()
-            index, _ = Node.get_function_to_move(current.parrent,current)
-            cost += costs[index]
-            current = current.parrent
-
-        Node.cost_function = old_cost
-        return cost
-        
-    def __init__(self, pos, cost=0, parrent=None):
-        self.pos = pos  # node position
+    def __init__(self, state, cost=0, parrent=None):
+        self.state = state  # node state
         self.cost = cost  # cost to node
         self.parrent = parrent  # node parent
 
         # Calculate node path
         if self.parrent == None:
-            self.path = [self.pos]
+            self.path = [self.state]
         else:
-            self.path = parrent.path + [self.pos]
+            self.path = parrent.path + [self.state]
 
         # Calculate node depth
         if self.parrent == None:
@@ -66,35 +33,35 @@ class Node:
             self.accumulate_cost = self.cost + 0
         else:
             self.accumulate_cost = self.cost + parrent.accumulate_cost
-        
-    def get_costs(self):
+
+    def get_neighbors(self):
+        costs = []
+        neighbors = []
         if Node.cost_function == "c1":
             # Todas tem custo 10
-            return [10] * 4
+            costs = [10] * 4
         elif Node.cost_function == "c2":
             # f1, f2 tem custo 15
             # f3, f4 tem custo 10
-            return [15] * 2 + [10] * 2
+            costs = [15] * 2 + [10] * 2
         elif Node.cost_function == "c3":
             # t = profundidade do nó
             # f1, f2 tem custo 10 + (|5-t| mod 6)
             # f3, f4 tem custo 10
-            return [10 + (abs(5 - (self.depth + 1)) % 6)] * 2 + [10] * 2
+            costs =  [10 + (abs(5 - (self.depth + 1)) % 6)] * 2 + [10] * 2
         elif Node.cost_function == "c4":
             # f1, f2 tem custo 5 + (|10-t| mod 11)
             # f3, f4 tem custo 10
-            return [5 + (abs(10 - (self.depth + 1)) % 11)] * 2 + [10] * 2
+            costs =  [5 + (abs(10 - (self.depth + 1)) % 11)] * 2 + [10] * 2
         else:
             raise Exception(f"Invalid cost function -> {Node.cost_function}")
-
-    def get_neighbors(self):
-        costs = Node.get_costs(self)
-        neighbors = []
         
         for i in range(len(ACTIONS)):
-            neighbor_pos = ACTIONS[i](self.pos)
+            neighbor_pos = ACTIONS[i]((self.state[0], self.state[1]))
+            went_through_pharmacy = True if neighbor_pos in Node.pharmacy_positions else self.state[2]
+            neighbor_state = (*neighbor_pos, went_through_pharmacy)
             neighbor_cost = costs[i]
-            neighbor = Node(neighbor_pos, neighbor_cost, self)
+            neighbor = Node(neighbor_state, neighbor_cost, self)
             if neighbor.is_valid():
                 neighbors.append(neighbor)
         
@@ -103,20 +70,20 @@ class Node:
     def get_heuristic_value(self, other):
         if Node.heuristic_function == "h1":
             # Euclidean Distance
-            d_x = pow(abs(other.pos[0] - self.pos[0]), 2)
-            d_y = pow(abs(other.pos[1] - self.pos[1]), 2)
+            d_x = pow(abs(other.state[0] - self.state[0]), 2)
+            d_y = pow(abs(other.state[1] - self.state[1]), 2)
             return 10 * sqrt(d_x + d_y)
         elif Node.heuristic_function == "h2":
             # Manhattan Distance
-            d_x = abs(other.pos[0] - self.pos[0])
-            d_y = abs(other.pos[1] - self.pos[1])
+            d_x = abs(other.state[0] - self.state[0])
+            d_y = abs(other.state[1] - self.state[1])
             return 10 * (d_x + d_y)
         else:
             raise Exception(f"Invalid heuristic function -> {Node.cost_function}")
     
     def is_valid(self):
         for i in range(2):
-            if self.pos[i] < 0 or self.pos[i] > MAP_SIZE[i]:
+            if self.state[i] < 0 or self.state[i] > MAP_SIZE[i]:
                 return False
         return True
 
@@ -137,4 +104,4 @@ class Node:
             return self.accumulate_cost < other.accumulate_cost
 
     def __str__(self):
-        return f"pos: {self.pos}, depth: {self.depth}, cost: {self.cost}, "
+        return f"state: {self.state}, depth: {self.depth}, cost: {self.cost}, "
