@@ -1,8 +1,9 @@
 import random
+import copy
 from os.path import realpath, dirname, join
-from node import Node
-from result import Result
 from searches import BFS, DFS
+from result import Result
+from node import Node
 
 if __name__ == "__main__":
     search_objectives = []
@@ -24,13 +25,16 @@ if __name__ == "__main__":
         results = []
         for search_objective in search_objectives:
             for i in range(1, 21):
+                result, result_node = search_function(
+                    search_objective[0],
+                    search_objective[1]
+                )
                 for cost_function in COST_FUNCTIONS:
-                    Node.cost_function = cost_function
-                    result = search_function(
-                        search_objective[0],
-                        search_objective[1]
-                    )
-                    result.execution_number = i
-                    results.append(result)
+                    result_copy = copy.deepcopy(result)
+                    result_copy.execution_number = i
+                    result_copy.cost = result_node.get_cost_with_cost_function(cost_function)
+                    result_copy.cost_function = cost_function
+                    result_copy.verbose = True
+                    results.append(result_copy)
         print(f"Saving result{search_name}.csv")
         Result.saveResultsAsCSV(results, join(SAVE_PATH, f"resultado{search_name}.csv"))

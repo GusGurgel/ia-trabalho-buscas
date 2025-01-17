@@ -10,6 +10,46 @@ class Node:
     use_a_star_compration = False
     a_start_objective_node = None
 
+    @staticmethod
+    def get_function_to_move(node1, node2):
+        dx = node2.pos[0] - node1.pos[0]
+        dy = node2.pos[1] - node1.pos[1]
+
+        vx = (dx, dy)
+
+        if vx == (-1, 0):
+            return (0, F1)
+        elif vx == (1, 0):
+            return (1, F2)
+        elif vx == (0, -1):
+            return (2, F3)
+        elif vx == (0, 1):
+            return (3, F4)
+        else:
+            raise Exception(f"Not neighbors nodes\nnode1.pos:{node1.pos}\nnode2.pos:{node2.pos})")
+
+    def get_cost_with_cost_function(self, cost_function):
+        old_cost = Node.cost_function
+        Node.cost_function = cost_function
+
+        cost = 0
+        current = self
+
+        while current.parrent != None:
+            costs = current.parrent.get_costs()
+            index, function_to_move = Node.get_function_to_move(current.parrent,current)
+            dic = [
+                "(-1, 0)",
+                "(+1, 0)",
+                "(0, -1)",
+                "(0, +1)",
+            ]
+            cost += costs[index]
+            current = current.parrent
+
+        Node.cost_function = old_cost
+        return cost
+        
     def __init__(self, pos, cost=0, parrent=None):
         self.pos = pos  # node position
         self.cost = cost  # cost to node
@@ -32,28 +72,30 @@ class Node:
             self.accumulate_cost = self.cost + 0
         else:
             self.accumulate_cost = self.cost + parrent.accumulate_cost
-
-    def get_neighbors(self):
-        costs = []
-        neighbors = []
+        
+    def get_costs(self):
         if Node.cost_function == "c1":
             # Todas tem custo 10
-            costs = [10] * 4
+            return [10] * 4
         elif Node.cost_function == "c2":
             # f1, f2 tem custo 15
             # f3, f4 tem custo 10
-            costs = [15] * 2 + [10] * 2
+            return [15] * 2 + [10] * 2
         elif Node.cost_function == "c3":
             # t = profundidade do nó
             # f1, f2 tem custo 10 + (|5-t| mod 6)
             # f3, f4 tem custo 10
-            costs =  [10 + (abs(5 - (self.depth + 1)) % 6)] * 2 + [10] * 2
+            return [10 + (abs(5 - (self.depth + 1)) % 6)] * 2 + [10] * 2
         elif Node.cost_function == "c4":
             # f1, f2 tem custo 5 + (|10-t| mod 11)
             # f3, f4 tem custo 10
-            costs =  [5 + (abs(10 - (self.depth + 1)) % 11)] * 2 + [10] * 2
+            return [5 + (abs(10 - (self.depth + 1)) % 11)] * 2 + [10] * 2
         else:
             raise Exception(f"Invalid cost function -> {Node.cost_function}")
+
+    def get_neighbors(self):
+        costs = Node.get_costs(self)
+        neighbors = []
         
         for i in range(len(ACTIONS)):
             neighbor_pos = ACTIONS[i](self.pos)

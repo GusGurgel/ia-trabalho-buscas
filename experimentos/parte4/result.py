@@ -10,7 +10,7 @@ RESULT_CSV_FIELDS = [[
     "Visited Nodes",
     "Algorithm",
     "Cost Function",
-    "Heuristic"
+    "Heuristic",
     "Execution Number"
 ]]
 
@@ -52,7 +52,6 @@ class Result:
             self.heuristic,
             self.execution_number
         ]
-        
     
     def __str__(self):
         res = f"""Inital State: {self.initial_state}

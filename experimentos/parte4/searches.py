@@ -2,7 +2,6 @@ from result import Result
 from node import Node
 from queue import PriorityQueue
 from random import shuffle
-import random
 
 # [ Variables ]
 interest_points = {}
@@ -43,7 +42,7 @@ def DFS(inital_pos, objective_pos, verbose=False) -> Result:
 
         visited.append(current_node.pos)
 
-    return Result(
+    return (Result(
         inital_pos,
         objective_pos,
         "Error" if result_node == None else result_node.path,
@@ -52,7 +51,7 @@ def DFS(inital_pos, objective_pos, verbose=False) -> Result:
         len(visited),
         "DFS",
         verbose
-    )
+    ), result_node)
 
 def BFS(inital_pos, objective_pos, verbose=False) -> Result:
     search_function_prelude(inital_pos, objective_pos)
@@ -81,7 +80,7 @@ def BFS(inital_pos, objective_pos, verbose=False) -> Result:
 
         visited.append(current_node.pos)
 
-    return Result(
+    return (Result(
         inital_pos,
         objective_pos,
         "Error" if result_node == None else result_node.path,
@@ -90,7 +89,7 @@ def BFS(inital_pos, objective_pos, verbose=False) -> Result:
         len(visited),
         "BFS",
         verbose
-    )
+    ), result_node)
 
 def UCS(inital_pos, objective_pos, verbose=False) -> Result:
     search_function_prelude(inital_pos, objective_pos)
