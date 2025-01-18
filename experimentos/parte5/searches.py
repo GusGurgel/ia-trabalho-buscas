@@ -1,14 +1,12 @@
 from result import Result
 from node import Node
 from queue import PriorityQueue
-import random
 
-# [ Variables ]
-interest_points = {}
+# [ Algorítmos de busca ]
 
-# [ Search algorithms ]
-
-# Run on start of any search function
+# Essa função deve rodar antes do início de cada algorítmo de busca. Ela
+# garante que as posicões inical e de objetivos não estejam fora da borda do
+# mapa.
 def search_function_prelude(inital_pos, objective_pos):
     if not Node(inital_pos).is_valid():
         raise Exception(f"Invalid inital state -> {inital_pos}")
