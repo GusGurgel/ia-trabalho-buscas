@@ -35,20 +35,10 @@ if __name__ == "__main__":
         # Itera sobre cada objetivo de busca gerado
         for search_objective in search_objectives:
             # Itera sobre todas as funções de custo
-            for cost_function in COST_FUNCTIONS:
-                # Se o algoritmo atual for A*, também itera sobre as funções heurísticas
-                if search_name == "A_Star":
-                    for heuristic_function in HEURISTIC_FUNCTIONS:
-                        Node.heuristic_function = heuristic_function  # Define a função heurística
-                        Node.cost_function = cost_function  # Define a função de custo
-                        # Executa a busca e armazena o resultado
-                        results.append(search_function(
-                            search_objective[0],  # Posição inicial
-                            search_objective[1]   # Posição objetivo
-                        ))
-                else:
-                    # Para outros algoritmos, apenas define a função de custo
-                    Node.cost_function = cost_function
+            for heuristic_function in HEURISTIC_FUNCTIONS:
+                for cost_function in COST_FUNCTIONS:
+                    Node.heuristic_function = heuristic_function  # Define a função heurística
+                    Node.cost_function = cost_function  # Define a função de custo
                     # Executa a busca e armazena o resultado
                     results.append(search_function(
                         search_objective[0],  # Posição inicial
