@@ -1,5 +1,6 @@
-from node import *
+import os
 import csv
+from node import *
 
 # Constante que define os campos do cabeçalho para o arquivo CSV de resultados
 RESULT_CSV_FIELDS = [[
@@ -19,6 +20,14 @@ class Result:
     # Método estático para salvar um array de objetos Result em um arquivo CSV
     @staticmethod
     def saveResultsAsCSV(arr, path="result.csv"):
+        # Extrai o diretório do caminho fornecido
+        directory = os.path.dirname(path)
+        
+        # Verifica se o diretório existe; se não, cria-o
+        if directory and not os.path.exists(directory):
+            os.makedirs(directory)
+
+        # Abre o arquivo para escrita
         with open(path, 'w', newline='') as file:
             arr = map(lambda x: x.as_array(), arr)  # Converte cada resultado para um array
             writer = csv.writer(file)

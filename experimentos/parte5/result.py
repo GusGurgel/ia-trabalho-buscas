@@ -1,5 +1,6 @@
 from node import *
 import csv
+import os
 
 # Campos para o cabeçalho do arquivo CSV que armazenará os resultados
 RESULT_CSV_FIELDS = [[
@@ -19,12 +20,20 @@ RESULT_CSV_FIELDS = [[
 class Result:
     # Método para salvar os resultados como um arquivo CSV
     def saveResultsAsCSV(arr, path="result.csv"):
+        # Extrai o diretório do caminho fornecido
+        directory = os.path.dirname(path)
+        
+        # Verifica se o diretório existe; se não, cria-o
+        if directory and not os.path.exists(directory):
+            os.makedirs(directory)
+
+        # Abre o arquivo para escrita
         with open(path, 'w', newline='') as file:
-            arr = map(lambda x : x.as_array(), arr)  # Converte os resultados para o formato de array
+            arr = map(lambda x: x.as_array(), arr)  # Converte cada resultado para um array
             writer = csv.writer(file)
-            # Escreve o cabeçalho no arquivo CSV
+            # Escreve o cabeçalho no arquivo
             writer.writerows(RESULT_CSV_FIELDS)
-            # Escreve as linhas correspondentes aos resultados
+            # Escreve os resultados no arquivo
             writer.writerows(arr)
 
     # Construtor da classe Result

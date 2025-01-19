@@ -1,5 +1,6 @@
 from node import *
 import csv
+import os
 
 RESULT_CSV_FIELDS = [[
     "Inital State",
@@ -17,12 +18,20 @@ RESULT_CSV_FIELDS = [[
 # Represent a search result
 class Result:
     def saveResultsAsCSV(arr, path="result.csv"):
+        # Extrai o diretório do caminho fornecido
+        directory = os.path.dirname(path)
+        
+        # Verifica se o diretório existe; se não, cria-o
+        if directory and not os.path.exists(directory):
+            os.makedirs(directory)
+
+        # Abre o arquivo para escrita
         with open(path, 'w', newline='') as file:
-            arr = map(lambda x : x.as_array(), arr)
+            arr = map(lambda x: x.as_array(), arr)  # Converte cada resultado para um array
             writer = csv.writer(file)
-            # Write header
+            # Escreve o cabeçalho no arquivo
             writer.writerows(RESULT_CSV_FIELDS)
-            # Write rows
+            # Escreve os resultados no arquivo
             writer.writerows(arr)
 
     def __init__(self, initial_state, search_objective, path, cost, gen_nodes, 
