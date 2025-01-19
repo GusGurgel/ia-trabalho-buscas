@@ -3,7 +3,7 @@ from os.path import realpath, dirname, join
 from node import Node
 from result import Result
 
-from searches import UCS, A_Star
+from searches import Greedy, A_Star
 
 if __name__ == "__main__":
     search_objectives = []
@@ -18,7 +18,7 @@ if __name__ == "__main__":
         
     COST_FUNCTIONS = ["c1", "c2", "c3", "c4"]
     HEURISTIC_FUNCTIONS = ["h1", "h2"]
-    SEARCHES = [("UCS",UCS), ("A_Star", A_Star)]
+    SEARCHES = [("Greedy",Greedy), ("A_Star", A_Star)]
 
     SAVE_PATH = join(dirname(realpath(__file__)), "resultado")
 
